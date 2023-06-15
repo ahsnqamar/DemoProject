@@ -12,10 +12,44 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+<!--    <androidx.viewpager.widget.ViewPager-->
+<!--        android:id="@+id/view_pager"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tab_layout" />-->
+
+    <ImageView
+        android:id="@+id/image_get"
+        android:layout_width="223dp"
+        android:layout_height="189dp"
+        android:layout_margin="20dp"
+        android:layout_marginTop="88dp"
+        android:src="@drawable/img_search"
+        app:layout_constraintTop_toBottomOf="@id/tab_layout"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="94dp" />
+
+    <ImageView
+        android:id="@+id/music_screen"
+        android:layout_width="41dp"
+        android:layout_height="45dp"
+        android:src="@drawable/arrow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_get"
+        app:layout_constraintVertical_bias="0.289"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <ImageView
+        android:id="@+id/getImage"
+        android:src="@drawable/stop"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="108dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_get" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

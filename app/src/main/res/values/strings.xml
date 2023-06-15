@@ -3,4 +3,5 @@
     <string name="home_fragment">HomeFragment</string>
     <string name="sport_fragment">Sport Fragment</string>
     <string name="movie_fragment">Movie Fragment</string>
+    <string name="heading">Services in android</string>
 </resources>

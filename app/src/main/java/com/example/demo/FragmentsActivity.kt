@@ -4,67 +4,74 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.demo.fragments.CallsFragment
 import com.example.demo.fragments.HomeFragment
 import com.example.demo.fragments.SportFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class FragmentsActivity : AppCompatActivity() {
 
-    private lateinit var frameLayout: FrameLayout
-    private var status: Button ?= null
-    private var calls: Button ?= null
-    private var messages: Button ?= null
+    private lateinit var bottomNav: BottomNavigationView
 
-    private var rootString = "root_fragment"
+    private val homeFragment by lazy { HomeFragment() }
+    private val callsFragment by lazy { CallsFragment() }
+    private val settingsFragment by lazy { SportFragment() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment)
         init()
-        initListeners()
-        // default fragment
-        loadFrag(HomeFragment(),0)
+        loadFragment(homeFragment)
+        initListener()
+
+        bottomNav.getOrCreateBadge(R.id.Calls).number = 2
 
 
 
 
     }
 
-    private fun initListeners() {
-        messages?.setOnClickListener {
-            loadFrag(HomeFragment(),0)
+    private fun initListener() {
+        bottomNav.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.home -> {
+                    println("hello")
+                    loadFragment(homeFragment)
+                    true
+                }
+                R.id.Calls -> {
+                    println("hi")
+                    loadFragment(callsFragment)
+                    bottomNav.getOrCreateBadge(R.id.Calls).clearNumber()
+                    true
+                }
+                R.id.Settings -> {
+                    loadFragment(settingsFragment)
+                    true
+                }
+
+                else -> {loadFragment(HomeFragment())
+                    true
+                }
+            }
         }
-        calls?.setOnClickListener {
-            loadFrag(SportFragment(),1)
-        }
-        status?.setOnClickListener {
-            loadFrag(CallsFragment(),1)
-        }
+
     }
 
-    private fun loadFrag(fragment_name: Fragment, flag: Int) {
-        var fm: FragmentManager = supportFragmentManager
-        var ft: FragmentTransaction = fm.beginTransaction()
+    private fun init(){
+        bottomNav = findViewById(R.id.bottomNav)
 
-        if (flag == 0){
-            ft.add(R.id.FL, fragment_name)
-            fm.popBackStack(rootString, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-            ft.addToBackStack(rootString)
-        }
-        else{
-            ft.replace(R.id.FL, fragment_name)
-            ft.addToBackStack(null)
-        }
-        ft.commit()
     }
 
-    private fun init() {
-        findViewById<FrameLayout>(R.id.FL)
-        status = findViewById(R.id.status)
-        calls = findViewById(R.id.calls)
-        messages = findViewById(R.id.msgs)
+    private fun loadFragment(fragment: Fragment){
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_container,fragment)
+        transaction.commit()
+
     }
+
 }
