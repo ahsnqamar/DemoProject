@@ -1,5 +1,6 @@
 package com.example.demo
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings.Global
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -19,10 +21,16 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import java.net.URL
 
 class TabActivity : AppCompatActivity() {
@@ -97,17 +105,9 @@ class TabActivity : AppCompatActivity() {
 
         getBitmapFromUrl()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            launch{ val call = doSomething()
-            println(call)
-            }
-            println("34")
-            println("call")
-            main()
+        //main()
 
-        }
-
-
+        randomWork()
 
 
     }
@@ -152,19 +152,66 @@ class TabActivity : AppCompatActivity() {
         return BitmapFactory.decodeStream(url.openConnection().getInputStream())
     }
 
-    private suspend fun main(): Unit = coroutineScope{
+    private fun main() = CoroutineScope(Dispatchers.Default).launch(){
+        println("My program runs...: ${Thread.currentThread().name}")
 
-        launch(Dispatchers.Default) {
-            println("Default : Thread ${Thread.currentThread().name}")
+        launch { // starting a coroutine
+            println("1")  // calling the long running function
+        }
+        launch{
+            delay(2000L)
+            println("2")
+
         }
 
-        launch(Dispatchers.Unconfined) {
-            println("Unconfined : Thread ${Thread.currentThread().name}")
+        launch{
+            println("3")
         }
 
-        launch(Dispatchers.IO) {
-            println("IO : Thread ${Thread.currentThread().name}")
+        launch {
+            longRunningTask()
         }
+
+        for (i in 1..10){
+            println("i $i")
+        }
+        println("5")
+
+        //longRunningTask()
+
+        println("My program run ends...: ${Thread.currentThread().name}")
+    }
+
+    private suspend fun longRunningTask(){
+        println("executing longRunningTask on...: ${Thread.currentThread().name}")
+        delay(1000L)  // simulating the slow behavior by adding a delay
+        println(
+            "longRunningTask ends on thread ...: ${Thread.currentThread().name}")
+    }
+
+    private fun randomWork(){
+        val job = CoroutineScope(Dispatchers.Default).launch {
+            Log.d(TAG,"Starting the long calculation...")
+
+            withTimeout(8000L){
+                // running the loop from 30 to 40
+                for(i in 30..40)
+                {
+                    // using isActive functionality to check whether the
+                    // coroutine is active or not
+                    if(isActive)
+                        Log.d(TAG, "Result for i =$i : ${fib(i)}")
+                }
+                Log.d(TAG, "Ending the long calculation...")
+            }
+        }
+    }
+
+    private fun fib(n:Int):Long
+    {
+        return if(n==0) 0
+        else if(n==1) 1
+        else fib(n-1) + fib(n-2)
     }
 
 

@@ -5,18 +5,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <ImageView
+        android:id="@+id/mvvm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/share"
+        app:layout_constraintEnd_toStartOf="@+id/dummy_text"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="10dp"
+        tools:ignore="MissingConstraints" />
+
     <TextView
         android:id="@+id/dummy_text"
-        android:layout_width="243dp"
-        android:layout_height="24dp"
+        android:layout_width="142dp"
+        android:layout_height="27dp"
         android:layout_marginTop="10dp"
         android:fontFamily="serif-monospace"
         android:gravity="center_horizontal"
-        android:text="Dummy Products"
+        android:text="Dummy "
         android:textSize="18dp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="101dp" />
 
 
     <ImageView
@@ -26,7 +37,7 @@
         android:src="@drawable/tab"
         app:layout_constraintBottom_toBottomOf="@+id/dummy_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.722"
+        app:layout_constraintHorizontal_bias="0.888"
         app:layout_constraintStart_toEndOf="@+id/dummy_text"
         app:layout_constraintTop_toTopOf="@+id/dummy_text"
         app:layout_constraintVertical_bias="0.0" />
@@ -37,6 +48,17 @@
         android:layout_height="wrap_content"
         android:src="@drawable/settings"
         app:layout_constraintEnd_toStartOf="@+id/tab_button"
+        app:layout_constraintHorizontal_bias="0.701"
+        app:layout_constraintStart_toEndOf="@+id/dummy_text"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="10dp" />
+
+    <ImageView
+        android:id="@+id/webButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/calls"
+        app:layout_constraintEnd_toStartOf="@+id/bottom_sheets"
         app:layout_constraintStart_toEndOf="@+id/dummy_text"
         tools:layout_editor_absoluteY="10dp"
         tools:ignore="MissingConstraints" />

@@ -11,12 +11,15 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.produceState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.demo.Adapters.ProductsAdapter
 import com.example.demo.ApiService.ClientApi
+import com.example.demo.ApiService.KtorService
 import com.example.demo.Modal.DummyProducts
 import com.example.demo.Modal.Product
+import com.example.demo.Modal.ResponseModel
 import com.example.demo.notes.Note
 import com.example.demo.notes.NoteDao
 import com.example.demo.notes.NotesDatabase
@@ -33,6 +36,15 @@ class MainActivity : ComponentActivity() {
     private var tabButton: ImageView ?= null
     private var sheetsButton: ImageView ?= null
     lateinit var receiver: AirplaneModeChangeReceiver
+    private val webButton: ImageView by lazy {
+        findViewById(R.id.webButton)
+    }
+
+    private var mvvm: ImageView ?= null
+
+    private val apiService by lazy {
+        KtorService.create()
+    }
 
     private fun toastShow(msg: String){
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show()
@@ -45,6 +57,8 @@ class MainActivity : ComponentActivity() {
         val progressBar: ProgressBar = findViewById(R.id.progress_circular)
         productsRV.layoutManager = LinearLayoutManager(this)
 
+
+
         toastShow("OnCreate")
 
         init()
@@ -56,6 +70,15 @@ class MainActivity : ComponentActivity() {
 //            registerReceiver(receiver,it)
 //        }
 
+        CoroutineScope(Dispatchers.IO).launch{
+            for (i in apiService.getProducts()){
+                //println(i.title)
+            }
+
+            //val img = apiService.getProducts()
+
+        }
+
 
         progressBar.visibility = View.VISIBLE
 //        tabButton?.setOnClickListener {
@@ -63,31 +86,8 @@ class MainActivity : ComponentActivity() {
 //        }
     }
 
-    override fun onStop() {
-        super.onStop()
-        toastShow("onStop")
-//        unregisterReceiver(receiver)
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        toastShow("OnDestroy")
-    }
 
-    override fun onStart() {
-        super.onStart()
-        toastShow("OnStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        toastShow("OnResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        toastShow("OnPause")
-    }
 
     private fun initListener() {
         tabButton?.setOnClickListener {
@@ -95,7 +95,14 @@ class MainActivity : ComponentActivity() {
         }
         sheetsButton?.setOnClickListener {
             showBottomSheetDialog()
+        }
 
+        webButton.setOnClickListener {
+            startActivity(Intent(this,WebActivity::class.java))
+        }
+
+        mvvm?.setOnClickListener {
+            startActivity(Intent(this,LoginActivity::class.java))
         }
     }
 
@@ -126,6 +133,7 @@ class MainActivity : ComponentActivity() {
     private fun init() {
         tabButton = findViewById(R.id.tab_button)
         sheetsButton = findViewById(R.id.bottom_sheets)
+        mvvm = findViewById(R.id.mvvm)
 
         val database = NotesDatabase.getInstance(applicationContext)
         val notesDao: NoteDao = database.noteDao()
@@ -150,7 +158,7 @@ class MainActivity : ComponentActivity() {
                     findViewById<RecyclerView>(R.id.products_rv).adapter = ProductsAdapter(product) {product: Product ->
                         var intent: Intent = Intent(this@MainActivity,TabActivity::class.java)
                         intent.putExtra("product", product)
-                        println("product $product")
+                       // println("product $product")
                         startActivity(intent)
                     }
 
