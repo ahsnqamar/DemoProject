@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <entry>
+        <key>new_image</key>
+        <value>https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQmtu_wqN24JbSuN1wkjrAUSlZ9QxCEWK2rakujHFe&amp;s</value>
+    </entry>
+
+    <entry>
+        <key>new_text</key>
+        <value>Some image</value>
+    </entry>
+
+</defaultsMap>

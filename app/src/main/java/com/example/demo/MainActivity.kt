@@ -1,6 +1,8 @@
 package com.example.demo
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -9,6 +11,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.produceState
@@ -20,21 +23,31 @@ import com.example.demo.ApiService.KtorService
 import com.example.demo.Modal.DummyProducts
 import com.example.demo.Modal.Product
 import com.example.demo.Modal.ResponseModel
+import com.example.demo.databinding.ActivityMainBinding
 import com.example.demo.notes.Note
 import com.example.demo.notes.NoteDao
 import com.example.demo.notes.NotesDatabase
 import com.example.demo.recievers.AirplaneModeChangeReceiver
+import com.example.demo.web.bind
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var binding: ActivityMainBinding
 
+    private lateinit var analytics: FirebaseAnalytics
 
-    private var tabButton: ImageView ?= null
-    private var sheetsButton: ImageView ?= null
+    //private var tabButton: ImageView ?= null
+    private lateinit var dummyText: TextView
+    //private var sheetsButton: ImageView ?= null
     lateinit var receiver: AirplaneModeChangeReceiver
     private val webButton: ImageView by lazy {
         findViewById(R.id.webButton)
@@ -50,16 +63,20 @@ class MainActivity : ComponentActivity() {
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show()
     }
 
+    @SuppressLint("StringFormatInvalid")
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val productsRV: RecyclerView = findViewById(R.id.products_rv)
+
         val progressBar: ProgressBar = findViewById(R.id.progress_circular)
         productsRV.layoutManager = LinearLayoutManager(this)
 
 
 
-        toastShow("OnCreate")
+//        toastShow("OnCreate")
 
         init()
         initListener()
@@ -84,16 +101,31 @@ class MainActivity : ComponentActivity() {
 //        tabButton?.setOnClickListener {
 //            startActivity(Intent(this, TabActivity::class.java))
 //        }
+        analytics = Firebase.analytics
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            println("token: $token")
+
+            // Log and toast
+            Log.d(TAG, token)
+            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+        })
+
     }
 
 
-
-
     private fun initListener() {
-        tabButton?.setOnClickListener {
+        binding.tabButton.setOnClickListener {
             startActivity((Intent(this,FragmentsActivity::class.java)))
         }
-        sheetsButton?.setOnClickListener {
+        binding.bottomSheets.setOnClickListener {
             showBottomSheetDialog()
         }
 
@@ -103,6 +135,10 @@ class MainActivity : ComponentActivity() {
 
         mvvm?.setOnClickListener {
             startActivity(Intent(this,LoginActivity::class.java))
+        }
+
+        dummyText.setOnClickListener {
+            startActivity(Intent(this,RemoteActivity::class.java))
         }
     }
 
@@ -131,8 +167,10 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun init() {
-        tabButton = findViewById(R.id.tab_button)
-        sheetsButton = findViewById(R.id.bottom_sheets)
+
+        //tabButton = findViewById(R.id.tab_button)
+
+        //sheetsButton = findViewById(R.id.bottom_sheets)
         mvvm = findViewById(R.id.mvvm)
 
         val database = NotesDatabase.getInstance(applicationContext)
@@ -144,6 +182,7 @@ class MainActivity : ComponentActivity() {
             println("data $data")
         }
 
+        dummyText = findViewById(R.id.dummy_text)
 
 
 
